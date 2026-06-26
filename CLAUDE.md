@@ -122,6 +122,21 @@ NOIZE already gathers faster, deeper trend data than any journalist can manually
 - **Phase 4:** Auto-post column headline to X every morning (distribution flywheel)
 - **Phase 5:** Standalone media property — not just an app feature, a brand
 
+### Visual Design — Old-School Broadsheet Newspaper
+The column looks like a 1940s newspaper. The contrast is the brand: cutting-edge AI trend intelligence dressed like a classic broadsheet.
+
+- **Masthead:** "THE DAILY SIGNAL" in large bold serif across the top. Subtitle: *"All the trends fit to shoot."* Edition number, date, price ("Two cents")
+- **Paper texture:** Aged cream/yellowed background — not white. Feels like holding a real newspaper
+- **Multi-column layout:** Stories flow in actual newspaper columns (2–3 col grid), not modern cards
+- **Typography:** Playfair Display or similar classic serif. Headlines in ALL CAPS condensed. Body copy tight and dense like newsprint
+- **Datelines:** *"NEW YORK, THURSDAY — Sources confirm the fitness accountability trend is moving at 4x velocity..."*
+- **Byline:** Every piece credited to *"Chief Detective Pugson, NOIZE Intelligence Bureau"*
+- **Pull quotes** styled as classic newspaper breakouts with ruled lines
+- **"BREAKING" stamp** in red — the only color on the page
+- **Trend velocity as a barometer** — old mechanical gauge graphic, not a modern chart
+- **Above/below the fold** hierarchy — biggest story gets top placement just like a real paper
+- **Section dividers** with old-school ruled lines between stories
+
 ### Technical Approach
 - Morning cron job pulls from all data sources
 - Exa semantic search for X + web signals
@@ -129,6 +144,8 @@ NOIZE already gathers faster, deeper trend data than any journalist can manually
 - GPT synthesizes into NOIZE voice column
 - Cached and served to all users (like existing Strange Signals pattern)
 - Optional: user selects their niche → personalized version of the column
+- Rendered as a styled HTML page inside Streamlit (custom CSS for newspaper look)
+- Shareable as a standalone link with full newspaper styling intact
 
 ---
 
