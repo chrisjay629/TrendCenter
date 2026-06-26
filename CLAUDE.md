@@ -94,6 +94,44 @@ This file is the source of truth for planned features, tech decisions, and conte
 
 ---
 
+## NOIZE as a Media Property — "The Daily Signal"
+
+### The Big Idea
+NOIZE already gathers faster, deeper trend data than any journalist can manually. The writing step is just one GPT call away. NOIZE becomes its own news column — written for content creators, not the general public.
+
+### Core Concept
+**"The Daily Signal" — by NOIZE**
+- Auto-generated every morning from all sources (Exa, Jina, Google News, Reddit, X, YouTube)
+- Written in NOIZE's noir/Chief Detective Pugson voice — sharp and punchy, not dry news copy
+- Each story compressed to 3–4 sentences max
+- Every story includes a **Creator Angle** — why this matters for your content, what to do with it
+- Trend velocity embedded in each item: *"Moving 4x faster than normal. Window: 18 hrs."*
+- Published before mainstream media catches up
+
+### What Makes It Different From Regular News
+- Written FOR content creators, not the general public
+- Tells you what to DO with the story, not just what happened
+- Published before it goes mainstream (First Signal advantage)
+- One compressed narrative — the whole day in one read, not 30 separate articles
+- Velocity data tells you how much time you have
+
+### Growth Path
+- **Phase 1:** Column tab inside the NOIZE app (auto-generated daily)
+- **Phase 2:** Email newsletter — subscribers get it every morning
+- **Phase 3:** Own URL (e.g. noize.news) — fresh daily content = Google SEO
+- **Phase 4:** Auto-post column headline to X every morning (distribution flywheel)
+- **Phase 5:** Standalone media property — not just an app feature, a brand
+
+### Technical Approach
+- Morning cron job pulls from all data sources
+- Exa semantic search for X + web signals
+- Jina Reader extracts full article text for context
+- GPT synthesizes into NOIZE voice column
+- Cached and served to all users (like existing Strange Signals pattern)
+- Optional: user selects their niche → personalized version of the column
+
+---
+
 ## Tech Notes
 
 ### Higgsfield Supercomputer
