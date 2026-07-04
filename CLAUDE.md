@@ -149,6 +149,74 @@ The column looks like a 1940s newspaper. The contrast is the brand: cutting-edge
 
 ---
 
+## Architecture Upgrades from Seeker Blueprint
+
+Seeker is a persistent AI investigation engine with architectural patterns that translate directly into NOIZE. These are not features — they are how the engine works under the hood.
+
+### Three-Tier Cost Discipline
+NOIZE currently fires expensive GPT calls for everything. The correct architecture:
+- **Tier 1 (free, always runs):** Platform scrapers, SQLite velocity math, gap scores, signal tier classification. No LLM, no API cost.
+- **Tier 2 (cheap, runs on qualifying signals):** Pre-filter triage, authenticity verification. Single gpt-4o-mini call.
+- **Tier 3 (expensive, rationed):** Deep Dossier, Blueprint generation, Daily Signal. Full GPT call, only fires after Tier 1 + 2 pass.
+- Rule: **prime the expensive call with cheap intelligence before firing it.**
+
+### Signal Tier System (replaces raw velocity tracking)
+Every trend gets classified. Lives in `database.py` as a `signal_tier` column:
+- **Confirmed** — appearing on 3+ independent platforms simultaneously
+- **Emerging** — on 2 platforms, gaining velocity
+- **Weak Signal** — one platform only, early detection
+- **Noise** — single mention, no cross-platform confirmation
+- A trend crossing tiers is more important than its absolute rank. Weak Signal → Emerging in 6 hours = Pre-Peak Alert trigger.
+
+### Cross-Platform Gap Detection (the First Signal engine)
+Platform disagreement IS the intelligence. Fire all scrapers in parallel (ThreadPoolExecutor). Compare results. A topic on X/Reddit with zero YouTube/Google News results gets a high gap score and triggers the First Signal flag. The current code discards this friction. This IS the feature.
+
+### Source Credibility Ledger
+SQLite table: `source_credibility` — tracks which subreddits, channels, and outlets consistently surface trends first. Auto-updates every 72 hours based on which signals materialized. Compounds over time. NOIZE gets smarter with no manual work.
+
+### Saturation / Window Calculator
+Rolling velocity window on `hashtag_snapshots`. Acceleration decreasing = approaching peak. Rate negative = past peak. Output: *"Window open — 18 hrs estimated"* on every trend card. Computable from existing data.
+
+### Miss Log (Trust Engine)
+SQLite table: `miss_log` — when a flagged trend doesn't materialize, log it. Show it publicly. *"NOIZE flagged this as Emerging on Tuesday. It didn't cross over. Reason: single platform signal."* Showing misses builds more trust than hiding them. Miss Log auto-feeds the Source Credibility Ledger.
+
+### Pre-Filter Triage Gate
+Before any expensive Dossier or Blueprint call, run cheap checks:
+1. Has this topic been investigated in the last 7 days? (SQLite, free)
+2. How many platforms show signal? (existing scraper data, free)
+3. What is the source credibility score? (ledger lookup, free)
+4. Is velocity accelerating or decelerating? (SQLite query, free)
+Only topics passing triage trigger the expensive GPT synthesis.
+
+### Multi-Lens Blueprint (Observer Council)
+Replace the single monolithic Blueprint GPT call with 5 targeted cheap calls:
+- **Early Adopter Lens** — is this actually early or has it been done?
+- **Saturation Lens** — how many creators already covered this?
+- **Counter-Trend Lens** — is a controversy forming that makes this risky?
+- **Hook Lens** — what language is the actual audience using?
+- **Monetization Lens** — does this topic type historically perform for revenue?
+Five cheap calls feed one final synthesis. Better output, lower cost per call.
+
+### Trend Forecast / Impact Map (added to Dossier)
+Three-column forecast section:
+- **Likely Peaks** — velocity-based peak timing estimate with historical comparisons
+- **Adjacent Opportunities** — related topics likely to emerge next
+- **Unknown Territory** — faint signals with no confirmation yet, first-mover advantage if they materialize
+
+### Detection Lead Time — The Headline Metric
+Track average hours between NOIZE first flagging a trend and it appearing in mainstream Google News/YouTube Trending. Publish it. *"NOIZE detected this 31 hours before mainstream."* This is the metric that justifies the product — not claimed, demonstrated.
+
+### Overnight Consolidation Pass (add to scheduler.py)
+3 AM job, no LLM calls — pure math:
+- Compute cross-platform gap scores for all topics in last 24 hours
+- Update velocity trajectories
+- Update Source Credibility Ledger
+- Pre-classify Signal Tiers
+- Flag top 5 topics that crossed a tier boundary overnight
+Daily Signal generates from pre-computed overnight intelligence, not expensive real-time calls at peak hours.
+
+---
+
 ## Tech Notes
 
 ### Higgsfield Supercomputer
